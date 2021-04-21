@@ -23,19 +23,19 @@ public class AdminController {
 
     @PostMapping
     public void registerNewUser(@RequestBody User user) {
-        System.out.println("registerNewStudent");
+        System.out.println("registerNewUser");
         System.out.println(user);
     }
 
     @DeleteMapping(path = "{userId}")
     public void deleteUser(@PathVariable ("userId") Long userId) {
-        System.out.println("deleteStudent");
+        System.out.println("deleteUser");
         System.out.println(userId);
     }
 
     @PutMapping
     public void updateUser(@PathVariable ("userId")Long userId, @RequestBody User user) {
-        System.out.println("updateStudent");
+        System.out.println("updateUser");
         System.out.println(String.format("%s %s", userId, user));
     }
 }
