@@ -1,17 +1,18 @@
 package com.alinatkachuk.socialnetwork.security;
 
+import com.alinatkachuk.socialnetwork.auth.ApplicationUserService;
+import com.alinatkachuk.socialnetwork.jwt.JwtTokenVerifier;
+import com.alinatkachuk.socialnetwork.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.concurrent.TimeUnit;
@@ -24,32 +25,12 @@ import static com.alinatkachuk.socialnetwork.security.ApplicationRole.USER;
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
+    private final ApplicationUserService applicationUserService;
 
     @Autowired
-    public ApplicationSecurityConfig(PasswordEncoder passwordEncoder) {
+    public ApplicationSecurityConfig(PasswordEncoder passwordEncoder, ApplicationUserService applicationUserService) {
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @Override
-    @Bean
-    protected UserDetailsService userDetailsService() {
-        UserDetails alinaUser = User.builder()
-                .username("alina")
-                .password(passwordEncoder.encode("password"))
-//                .roles(USER.name())
-                .authorities(USER.getGrantedAuthorities())
-                .build();
-
-        UserDetails nikitaUser = User.builder()
-                .username("nikita")
-                .password(passwordEncoder.encode("password123"))
-//                .roles(ADMIN.name())
-                .authorities(ADMIN.getGrantedAuthorities())
-                .build();
-        return new InMemoryUserDetailsManager(
-                alinaUser,
-                nikitaUser
-        );
+        this.applicationUserService = applicationUserService;
     }
 
     @Override
@@ -58,30 +39,29 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .csrf().csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
 //                .and()
                 .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()))
+                .addFilterAfter (new JwtTokenVerifier (), JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/","index", "/css/*", "/js/*").permitAll()
                 .antMatchers("/api/**").hasAnyRole(USER.name(), ADMIN.name())
                 .antMatchers("/admin/api/**").hasRole(ADMIN.name())
                 .anyRequest()
-                .authenticated()
-                .and()
-                .formLogin()
-                     .loginPage("/login").permitAll()
-                     .defaultSuccessUrl("/home", true)
-                     .passwordParameter("password")
-                     .usernameParameter("username")
-                .and()
-                .rememberMe()
-                     .tokenValiditySeconds((int)TimeUnit.DAYS.toSeconds(21))         //defaults 2 weeks
-                     .key("secured")
-                .and()
-                .logout()
-                     .logoutUrl("/logout")
-                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
-                     .clearAuthentication(true)
-                     .invalidateHttpSession(true)
-                     .deleteCookies("JSESSIONID", "remember-me")
-                     .logoutSuccessUrl("/login");
+                .authenticated();
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(daoAuthenticationProvider());
+    }
+
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(applicationUserService);
+        return provider;
     }
 }
 
