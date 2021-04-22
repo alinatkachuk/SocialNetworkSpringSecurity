@@ -1,5 +1,6 @@
 package com.alinatkachuk.socialnetwork.jwt;
 
+import com.google.common.net.HttpHeaders;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -38,4 +39,7 @@ public class JwtConfig {
         this.tokenExpirationAfterDays = tokenExpirationAfterDays;
     }
 
+    public String getAuthorizationHeader() {
+        return HttpHeaders.AUTHORIZATION;
+    }
 }
