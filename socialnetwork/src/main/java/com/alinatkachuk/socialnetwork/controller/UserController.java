@@ -21,7 +21,7 @@ public class UserController {
     @GetMapping(path="{userId}")
     public User getUser (@PathVariable("userId") Long userId) {
         return USERS.stream()
-                .filter(user -> userId.equals(user.getUserId()))
+                .filter(user -> userId.equals(user.getId()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("User "+userId+" does not exists"));
     }
