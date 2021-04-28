@@ -1,6 +1,9 @@
 package com.alinatkachuk.socialnetwork.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name="posts_db")
@@ -19,9 +22,14 @@ public class Post {
 
     private String content;
 
+    @OneToMany(mappedBy = "post")
+    @JsonIgnore
+    private List<Comment> comments;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn (name = "user_id")
-    private UserProfile userProfile;
+    @JoinColumn(name="user_id")
+    @JsonIgnore
+    private User user;
 
     public Long getId() {
         return id;
@@ -55,13 +63,13 @@ public class Post {
         this.content = content;
     }
 
-    public UserProfile getUserProfile() {
-        return userProfile;
-    }
+    public List<Comment> getComments(){return comments; }
 
-    public void setUserProfile(UserProfile userProfile) {
-        this.userProfile = userProfile;
-    }
+    public void setComments(List<Comment> comments){this.comments=comments; }
+
+    public User getUser(){return user; }
+
+    public void setUser(User user){this.user=user; }
 
     @Override
     public String toString() {
@@ -70,7 +78,6 @@ public class Post {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", content='" + content + '\'' +
-                ", userProfile=" + userProfile +
                 '}';
     }
 }

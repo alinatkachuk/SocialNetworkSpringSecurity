@@ -1,5 +1,7 @@
 package com.alinatkachuk.socialnetwork.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -12,13 +14,15 @@ public class Comment {
 
     private String text;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private Post post;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_profile_id")
-    private UserProfile userProfile;
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    @JsonIgnore
+    private Post post;
 
     public Long getId() {
         return id;
@@ -44,21 +48,12 @@ public class Comment {
         this.post = post;
     }
 
-    public UserProfile getUserProfile() {
-        return userProfile;
-    }
-
-    public void setUserProfile(UserProfile userProfile) {
-        this.userProfile = userProfile;
-    }
-
     @Override
     public String toString() {
         return "Comment{" +
                 "id=" + id +
                 ", text='" + text + '\'' +
                 ", post=" + post +
-                ", userProfile=" + userProfile +
                 '}';
     }
 }

@@ -22,31 +22,30 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "birth_date")
     private Calendar birthDate;
+
+    private int followers;
+
+    @ManyToMany
+    @JsonIgnore
+    private List<User> following;
+
+    @OneToMany(cascade =  CascadeType.ALL,
+               mappedBy = "user")
+    @JsonIgnore
+    private List<Post> posts;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    List<Comment> comments;
 
     private String email;
 
     private String password;
-
-    private int followers;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<User> following;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Post> posts;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    @JsonIgnore
-    private UserProfile userProfile;
 
     public Long getId() {
         return id;
@@ -120,13 +119,6 @@ public class User {
         this.posts = posts;
     }
 
-    public UserProfile getUserProfile() {
-        return userProfile;
-    }
-
-    public void setUserProfile(UserProfile userProfile) {
-        this.userProfile = userProfile;
-    }
 
     @Override
     public String toString() {
@@ -137,7 +129,6 @@ public class User {
                 ", birthDate=" + birthDate +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", userProfile=" + userProfile +
                 '}';
     }
 }
