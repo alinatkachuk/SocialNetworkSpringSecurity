@@ -3,11 +3,12 @@ package com.alinatkachuk.socialnetwork.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.Calendar;
 import java.util.List;
 
 @Entity
 @Table(name="posts_db")
-public class Post {
+public class Post implements Comparable<Post>{
 
     public Post() { }
 
@@ -22,9 +23,15 @@ public class Post {
 
     private String content;
 
+    private Calendar publicationDate;
+
     @OneToMany(mappedBy = "post")
     @JsonIgnore
     private List<Comment> comments;
+
+    @OneToMany(mappedBy = "post")
+    @JsonIgnore
+    private List<Like> likes;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
@@ -63,9 +70,21 @@ public class Post {
         this.content = content;
     }
 
+    public Calendar getPublicationDate() {
+        return publicationDate;
+    }
+
+    public void setPublicationDate(Calendar publicationDate) {
+        this.publicationDate = publicationDate;
+    }
+
     public List<Comment> getComments(){return comments; }
 
     public void setComments(List<Comment> comments){this.comments=comments; }
+
+    public List<Like> getLikes(){return likes; }
+
+    public void setLikes(List<Like> likes){this.likes=likes; }
 
     public User getUser(){return user; }
 
@@ -78,6 +97,13 @@ public class Post {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", content='" + content + '\'' +
+                ", publication date='" + publicationDate + '\'' +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Post that) {
+        int publicationDateCompare=this.publicationDate.compareTo (that.publicationDate);
+        return publicationDateCompare;
     }
 }

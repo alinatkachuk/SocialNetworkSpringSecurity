@@ -41,7 +41,11 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
-    List<Comment> comments;
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Like> likes;
 
     private String email;
 

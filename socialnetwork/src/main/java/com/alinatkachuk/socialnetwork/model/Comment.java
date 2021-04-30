@@ -3,6 +3,7 @@ package com.alinatkachuk.socialnetwork.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.Calendar;
 
 @Entity
 @Table(name = "comments")
@@ -14,6 +15,8 @@ public class Comment {
 
     private String text;
 
+    private Calendar publicationDate;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonIgnore
@@ -24,9 +27,7 @@ public class Comment {
     @JsonIgnore
     private Post post;
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
 
     public void setId(Long id) {
         this.id = id;
@@ -38,6 +39,14 @@ public class Comment {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public Calendar getPublicationDate() {
+        return publicationDate;
+    }
+
+    public void setPublicationDate(Calendar publicationDate) {
+        this.publicationDate = publicationDate;
     }
 
     public Post getPost() {
@@ -53,6 +62,7 @@ public class Comment {
         return "Comment{" +
                 "id=" + id +
                 ", text='" + text + '\'' +
+                ", publication date='" + publicationDate + '\'' +
                 ", post=" + post +
                 '}';
     }
