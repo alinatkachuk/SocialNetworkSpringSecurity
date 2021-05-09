@@ -23,17 +23,17 @@ public class PostController {
     }
 
     @PostMapping(path="{userId}/posts/new")
-    public String savePost (@PathVariable("post") Post post,
+    public void savePost (@PathVariable("post") Post post,
                             @PathVariable("userId") Long userId) {
         postServiceImpl.insertPost (post, userId);
-        return "savePost";
     }
 
     @GetMapping(path="{userId}/feed")
-    public String viewFeed (@PathVariable("userId") Long userId) {
+    public List<Post> viewFeed (@PathVariable("userId") Long userId) {
         List<Post> feedPosts = postRepository.findAll();
-        Collections.sort(postRepository.findAll());
-        return "viewFeed";
+        Collections.sort(feedPosts);
+        return feedPosts;
     }
+
 
 }

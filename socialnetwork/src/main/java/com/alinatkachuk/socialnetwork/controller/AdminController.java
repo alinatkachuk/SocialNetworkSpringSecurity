@@ -52,10 +52,12 @@ public class AdminController {
                 beginningOfPeriod.roll (Calendar.YEAR, false);
                 break;
         }
-        int allPosts=0; // = (postRepository.findAll()).stream().filter (post -> post.getPublicationDate().before(beginningOfPeriod)).count ();
+        int allPosts = (postRepository.findAllByPublicationDateAfterAndPublicationDateBefore(beginningOfPeriod, endOfPeriod)).size();
 
-        double averageNumberOfPosts = allPosts/(beginningOfPeriod.get(Calendar.DAY_OF_YEAR) - endOfPeriod.get(Calendar.DAY_OF_YEAR));
+        long millis = beginningOfPeriod.getTime().getTime() - endOfPeriod.getTime().getTime();
 
+        int days = (int) millis / 3_600_000 * 24;
+        float averageNumberOfPosts = (float) allPosts / days;
         List<User> tenUsersWithMaxNumberOfPosts;
 
         List<Post> tenMostLikedPosts; //   =(postRepository.findAll()).stream().sorted (Post::compareByLikes).limit (10);

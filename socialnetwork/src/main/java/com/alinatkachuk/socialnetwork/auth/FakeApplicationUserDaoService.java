@@ -12,7 +12,7 @@ import static com.alinatkachuk.socialnetwork.security.ApplicationRole.ADMIN;
 import static com.alinatkachuk.socialnetwork.security.ApplicationRole.USER;
 
 @Repository("fake")
-public class FakeApplicationUserDaoService implements ApplicationUserDao{
+public class FakeApplicationUserDaoService {
 
     private final PasswordEncoder passwordEncoder;
 
@@ -21,7 +21,6 @@ public class FakeApplicationUserDaoService implements ApplicationUserDao{
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
     public Optional<ApplicationUser> selectApplicationUserByUsername(String username) {
         return getApplicationUsers()
                 .stream()
