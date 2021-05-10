@@ -24,7 +24,7 @@ public class PostController {
 
     @PostMapping(path="{userId}/posts/new")
     public void savePost (@PathVariable("post") Post post,
-                            @PathVariable("userId") Long userId) {
+                          @PathVariable("userId") Long userId) {
         postServiceImpl.insertPost (post, userId);
     }
 

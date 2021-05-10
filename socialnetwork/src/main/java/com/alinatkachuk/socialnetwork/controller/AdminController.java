@@ -3,11 +3,10 @@ package com.alinatkachuk.socialnetwork.controller;
 import com.alinatkachuk.socialnetwork.model.Post;
 import com.alinatkachuk.socialnetwork.model.User;
 import com.alinatkachuk.socialnetwork.repository.PostRepository;
+import com.alinatkachuk.socialnetwork.repository.UserRepository;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("admin/api/v1/statistics")
@@ -21,6 +20,7 @@ public class AdminController {
     private static final List<String> reviewPeriods = Arrays.asList("day", "week", "month", "half a year", "year");
 
     private PostRepository postRepository;
+    private UserRepository userRepository;
 
     @GetMapping
     public static List<String> getReviewPeriodsForStatistics() {
@@ -29,7 +29,7 @@ public class AdminController {
     }
 
     @PostMapping
-    public void registerNewUser(@RequestBody String reviewPeriod) {
+    public void viewStatistics(@RequestBody String reviewPeriod) {
         System.out.println("Statistics for the specified period: ");
         Calendar beginningOfPeriod = Calendar.getInstance();
         Calendar endOfPeriod = Calendar.getInstance();
@@ -53,14 +53,16 @@ public class AdminController {
                 break;
         }
         int allPosts = (postRepository.findAllByPublicationDateAfterAndPublicationDateBefore(beginningOfPeriod, endOfPeriod)).size();
-
         long millis = beginningOfPeriod.getTime().getTime() - endOfPeriod.getTime().getTime();
-
         int days = (int) millis / 3_600_000 * 24;
         float averageNumberOfPosts = (float) allPosts / days;
-        List<User> tenUsersWithMaxNumberOfPosts;
 
-        List<Post> tenMostLikedPosts; //   =(postRepository.findAll()).stream().sorted (Post::compareByLikes).limit (10);
+        List<User> allUsersForTenUsersWithMaxNumberOfPosts =userRepository.findAll();
+        int lastUserInList = allUsersForTenUsersWithMaxNumberOfPosts.size ()-1;
+        allUsersForTenUsersWithMaxNumberOfPosts.sort(Comparator.comparingInt (user -> user.getPosts ().size ()));
+        List<User> tenUsersWithMaxNumberOfPosts=allUsersForTenUsersWithMaxNumberOfPosts.subList (lastUserInList-10, lastUserInList);
+
+        List<Post> tenMostLikedPosts; //= (allPosts.stream().sorted (Post::compareByLikes).limit (10);
 
         List<Post> tenMostCommentedPosts; //   =(postRepository.findAll()).stream().sorted (???).limit (10);
 

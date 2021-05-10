@@ -17,5 +17,4 @@ public interface PostRepository extends JpaRepository<Post,Long> {
    List <Post> findAllByPublicationDateAfterAndPublicationDateBefore(Calendar beginningOfPeriod, Calendar endOfPeriod);
 
 
-
 }
