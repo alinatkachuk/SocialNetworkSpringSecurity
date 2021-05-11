@@ -58,18 +58,18 @@ public class AdminController {
         float averageNumberOfPosts = (float) allPosts / days;
 
         List<User> allUsersForTenUsersWithMaxNumberOfPosts =userRepository.findAll();
-        int lastUserInList = allUsersForTenUsersWithMaxNumberOfPosts.size ()-1;
+        int numberOfLastUserInList = allUsersForTenUsersWithMaxNumberOfPosts.size ()-1;
         allUsersForTenUsersWithMaxNumberOfPosts.sort(Comparator.comparingInt (user -> user.getPosts ().size ()));
-        List<User> tenUsersWithMaxNumberOfPosts=allUsersForTenUsersWithMaxNumberOfPosts.subList (lastUserInList-10, lastUserInList);
+        List<User> tenUsersWithMaxNumberOfPosts=allUsersForTenUsersWithMaxNumberOfPosts.subList (numberOfLastUserInList-9, numberOfLastUserInList);
 
-        List<Post> tenMostLikedPosts; //= (allPosts.stream().sorted (Post::compareByLikes).limit (10);
+        List <Post> allPostsForStatistics = postRepository.findAllByPublicationDateAfterAndPublicationDateBefore (beginningOfPeriod, endOfPeriod);
+        int numberOfLastPostInList = allPostsForStatistics.size ()-1;
+        allPostsForStatistics.sort(Comparator.comparingInt (user -> user.getLikes ().size ()));
+        List<Post> tenMostLikedPosts=allPostsForStatistics.subList (numberOfLastPostInList-9, numberOfLastPostInList);
 
-        List<Post> tenMostCommentedPosts; //   =(postRepository.findAll()).stream().sorted (???).limit (10);
+        allPostsForStatistics.sort(Comparator.comparingInt (user -> user.getComments ().size ()));
+        List<Post> tenMostCommentedPosts=allPostsForStatistics.subList (numberOfLastPostInList-9, numberOfLastPostInList);
 
     }
-
-//    public int compareByLikes (Post p2) {
-//        return likes<p2.getLikes ()?1:(likes==p2.getLikes ()?0:-1);
-//    }
 
 }
