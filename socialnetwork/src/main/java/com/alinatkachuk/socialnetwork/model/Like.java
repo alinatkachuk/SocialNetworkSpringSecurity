@@ -22,4 +22,11 @@ public class Like {
     @JsonIgnore
     private Post post;
 
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
 }
