@@ -1,10 +1,10 @@
 package com.alinatkachuk.socialnetwork.controller;
 
+import org.springframework.web.bind.annotation.*;
 import com.alinatkachuk.socialnetwork.model.Post;
 import com.alinatkachuk.socialnetwork.model.User;
 import com.alinatkachuk.socialnetwork.repository.PostRepository;
 import com.alinatkachuk.socialnetwork.repository.UserRepository;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
